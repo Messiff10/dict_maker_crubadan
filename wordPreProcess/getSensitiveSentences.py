@@ -4,6 +4,9 @@ from config.conf import languages, priority, scenes_names
 from utils.reExpression import pattern_email, pattern_phoneNum, pattern_password, pattern_continuousNum, pattern_at
 
 # 提取敏感词
+regex = re.compile('\s+')
+
+
 def containSensitiveInfo(sentence):
     isContainSensitiveInfo = False
 
@@ -47,13 +50,18 @@ def getSensitiveSent():
                 res_not_sensitive = []
                 with open(output_file_name, 'w', encoding='utf-8') as output_file:
                     for line in input_file:
-                        count += 1
-                        if containSensitiveInfo(line):
-                            res_sensitive.append(line)
-                            # print(line)
-                            output_file.write(line + '\n')
+                        fileds = regex.split(line.strip())
+                        if len(fileds) >= 3:
+                            count += 1
+                            if containSensitiveInfo(line):
+                                res_sensitive.append(line)
+                                # print(line)
+                                output_file.write(line + '\n')
+                            else:
+                                res_not_sensitive.append(line)
                         else:
-                            res_not_sensitive.append(line)
+                            print(line)
+                            continue
 
                 print(language, ":", count, ",", "count_sensitive:", str(len(res_sensitive)))
 

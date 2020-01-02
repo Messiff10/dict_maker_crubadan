@@ -13,13 +13,19 @@ def random_pick_prob(sequence, probabilities):
 
 
 def random_pick_freq(sequence, freqs):
+    # print(sequence,freqs)
     # sequence_new = [z for x, y in zip(sequence, freqs) for z in [x] * int(y)]
     sequence_new = []
     for x, y in zip(sequence, freqs):
+        # print([x] * int(y))
         for z in[x] * int(y):
+            # print(z)
             sequence_new.append(z)
+    # for a in sequence_new:
+    #     print(a)
     while True:
         yield random.choice(sequence_new)
+
 
 def random_pick_freq_2(sequence, freqs):
     sequence_new = [z for x, y in zip(sequence, freqs) for z in [x] * int(y)]
@@ -41,19 +47,20 @@ def test_random_pick_prob():
 
 
 def test_random_pick_freq():
-    x = random_pick_freq('ciao', [1, 1, 3, 2])
-    print(itertools.islice(x, 8).__next__())
-    print(''.join(itertools.islice(x, 8)))
+    x = random_pick_freq(["bueno","buebo","bueni","bieno"], [22408, 1039, 935, 930])
+    # print(x)
+    # print(itertools.islice(x, 8).__next__())
+    print(''.join(itertools.islice(x,1)))
 
     result = ''.join(itertools.islice(x, 100000))
-    c = result.count('c')
-    i = result.count('i')
-    a = result.count('a')
-    o = result.count('o')
+    c = result.count('bueno')
+    i = result.count('buebo')
+    a = result.count('bueni')
+    o = result.count('bieno')
     min_ = min(c, i, a, o)
     print(float(c)/min_, ':', float(i)/min_, ':', float(a)/min_, ':', float(o)/min_, end=" this is end")
 
 
 if __name__ == "__main__":
-    test_random_pick_prob()
+    # test_random_pick_prob()
     test_random_pick_freq()

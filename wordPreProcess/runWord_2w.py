@@ -1,14 +1,15 @@
 from utils.is_emoji import is_emoji
 from utils.getWordMap import getWordMap
-from utils.getUnigram import getUnigram
-from utils.randomUtil import random_pick_freq
+from utils.getUnigram import getUnigram, getVocab
 from utils.reExpression import pattern_delete, getCharacterPattern
 from config.conf import languages, scenes_names, scenes_ratios, priority, addNoise, \
-    max_out_num, isPrint, ifRemoveNoCharacter, filterWordThreshold, dict_dir
+    max_out_num, isPrint, ifRemoveNoCharacter, filterWordThreshold, dict_dir_2w
 import re
 import os
 import time
 
+regex=re.compile('\s+')
+# 与两万词表对照生成测评
 # 生成相对应命中率的语料
 def runWord():
     # 产生形如"context \t keys \t desired_word"的结果，可用于测试输入效率
@@ -26,9 +27,9 @@ def runWord():
             characterPattern = getCharacterPattern(language)
             # print("characterPattern:", characterPattern)
 
-        dict_file_path = dict_dir + language + "_unigram"
-        dict_lang = getUnigram(dict_file_path)  # 词表
-        # print(len(dict_lang))
+        dict_file_path = dict_dir_2w + language + "_vocab_in_words"
+        dict_lang = getVocab(dict_file_path)
+
         if addNoise:
             print("getting", language, "word_map...")
             wordmap_all = getWordMap(language)
@@ -76,63 +77,62 @@ def runWord():
                     isAddCountout = False
                     output_scene_res = []
                     for line in input_file:
-                        # line = re.sub(pattern_delete, "", line).lower()  # 删除某些符号
-                        line = re.sub(pattern_delete, "", line)  # 删除某些符号
-                        words = line.strip().strip('"').split(' ')
-                        has_emoji = False
-                        count_inVocab = 0
-                        for word in words:
-                            if is_emoji(word):
-                                has_emoji = True
-                                break
-                            if word in dict_lang:
-                                # print(word)
-                                count_inVocab += 1
-                        wordInVocaRatio = count_inVocab / len(words)
-                        if wordInVocaRatio < filterWordThreshold:  # 每句话中在词典中的词小于过滤阈值，则删除整句话
-                            continue
-                        if has_emoji:
-                            count_emoji += 1
-                            continue
-                        if ifRemoveNoCharacter:
-                            isNoCharacter = re.search(characterPattern, line.lower())
-                            if isNoCharacter:
-                                count_noCharacter += 1
-                                # print(language, ":\t", line)
+                        fileds=regex.split(line.strip())
+                        if len(fileds)>=3:
+                            # line = re.sub(pattern_delete, "", line).lower()  # 删除某些符号
+                            line = re.sub(pattern_delete, "", line)  # 删除某些符号
+                            words = line.strip().strip('"').split(' ')
+                            has_emoji = False
+                            count_inVocab = 0
+                            for word in words:
+                                if is_emoji(word):
+                                    has_emoji = True
+                                    break
+                                if word in dict_lang:
+                                    count_inVocab += 1
+                            wordInVocaRatio = count_inVocab / len(words)
+                            if wordInVocaRatio < filterWordThreshold:  # 每句话中在词典中的词小于过滤阈值，则删除整句话
                                 continue
-                        if len(words) > 15:
-                            count_longSent += 1
-                            # continue
-                        count_line += 1
-                        # wordmap
-                        # for i in range(0, len(words)):
-                        #     fore = ' '.join(words[:i])
-                        #     word = words[i]
-                        #     word_lower = words[i].lower()
-                        #     if addNoise and (word_lower in wordmap_all):
-                        #         wordmap = random_pick_freq(wordmap_all[word_lower].keys(), wordmap_all[word_lower].values())
-                        #         noise_word = ''.join(itertools.islice(wordmap, 1))
-                        #         output_line = fore + '\t' + noise_word + '\t' + word + '\n'
-                        #         if noise_word != word:
-                        #             count_noiseword += 1
-                        #     else:
-                        #         output_line = fore + '\t' + word + '\t' + word + '\n'
-                        #     output_file.write(output_line)
-                        #     output_scene_res.append(output_line)
-                        #
-                        #     count_out += 1
+                            if has_emoji:
+                                count_emoji += 1
+                                continue
+                            if ifRemoveNoCharacter:
+                                isNoCharacter = re.search(characterPattern, line.lower())
+                                if isNoCharacter:
+                                    count_noCharacter += 1
+                                    # print(language, ":\t", line)
+                                    continue
+                            if len(words) > 15:
+                                count_longSent += 1
+                                # continue
+                            count_line += 1
+                            # for i in range(0, len(words)):
+                            #     fore = ' '.join(words[:i])
+                            #     word = words[i]
+                            #     word_lower = words[i].lower()
+                            #     if addNoise and (word_lower in wordmap_all):
+                            #         wordmap = random_pick_freq(wordmap_all[word_lower].keys(), wordmap_all[word_lower].values())
+                            #         noise_word = ''.join(itertools.islice(wordmap, 1))
+                            #         output_line = fore + '\t' + noise_word + '\t' + word + '\n'
+                            #         if noise_word != word:
+                            #             count_noiseword += 1
+                            #     else:
+                            #         output_line = fore + '\t' + word + '\t' + word + '\n'
+                            #     output_file.write(output_line)
+                            #     output_scene_res.append(output_line)
+                            #
+                            #     count_out += 1
 
-                        output_file.write(line)
-                        output_scene_res.append(line)
-                        count_out += len(words)
-                        count_inVocab_all += count_inVocab
+                            output_file.write(line)
+                            output_scene_res.append(line)
+                            count_out += len(words)
+                            count_inVocab_all += count_inVocab
 
-                        if count_out >= max_out_num_scene:
-                            isAddCountout = True
-                            # print(count_out)
-                            count_outs.append(count_out)
-                            count_inVocabs.append(count_inVocab_all)
-                            break
+                            if count_out >= max_out_num_scene:
+                                isAddCountout = True
+                                count_outs.append(count_out)
+                                count_inVocabs.append(count_inVocab_all)
+                                break
 
                     if not isAddCountout:
                         count_outs.append(count_out)

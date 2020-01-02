@@ -60,7 +60,7 @@ Russian_noCharacters = re.compile(r"[^й1ц2у3́к4е5́ён6г7ш8щ9з0хэ́
 
 # 阿拉伯语
 Arabic_noCharacters = re.compile(r'[^ض1١ص2٢ث3٣ق4ڨ٤ف5٥ڢڤڥغ6٦ع7٧ه8‍٨خ9٩ح0٠جچشڜسيئىبپلاإأآءٱتنمگكکطذؤرةوژزظد'
-                                 r',ـًٌٍَُِّْٰٖٕٓٔ¹½⅓¼⅛²⅔³¾⅜⅝⁴⅞@#¢$₱€£¥%٪‰&_\-—–·+±)}>﴿({<﴾*★٭"„“”»«\'‚‘’›‹:;؛¡!?؟'
+                                 r',ـًٌٍَُِّْٰٖٕٓٔ¹½⅓¼⅛²⅔³¾⅜⅝⁴⅞@#¢$₱€£¥%٪‰&_\-—–·+±)}>﴿({<﴾*★٭"„“”»«\'‚‘’›‹:;؛¡!?؟ '
                                  r'/،.~`|♪•√πΠ÷×§¶∆≠≈∞′″←↑↓→^\\©®™℅\]\[\s]+')
 
 # nl--Dutch 荷兰语
@@ -519,54 +519,186 @@ def getCharacterPattern(language):
 
 time_regex = r"(\d+) ?: ?(\d+)"
 time_nospace_regex = r"(\d+):(\d+)"
+line_regex = r"(\w+) ?- ?(\w+)"
+line_nospace_regex = r"(\w+)-(\w+)"
+non_bracket_part1 = r"([^\(\)]*)"
+bracket_regex1 = non_bracket_part1 + r"\(" + non_bracket_part1 + r"\)" + non_bracket_part1
 
-non_bracket_part = r"([^\(\)]*)"
-bracket_regex = non_bracket_part + r"\(" + non_bracket_part + r"\)" + non_bracket_part
+non_bracket_part2 = r"([^\{\}]*)"
+bracket_regex2 = non_bracket_part2 + r"\{" + non_bracket_part2 + r"\}" + non_bracket_part2
 
-non_quote_part = r'([^"]*)'
-quote_regex = non_quote_part + r'"' + non_quote_part + r'"' + non_quote_part
+non_bracket_part3 = r"([^\[\]]*)"
+bracket_regex3 = non_bracket_part3 + r"\[" + non_bracket_part3 + r"\]" + non_bracket_part3
 
+non_bracket_part4 = r"([^\<\>]*)"
+bracket_regex4 = non_bracket_part4 + r"\<" + non_bracket_part4 + r"\>" + non_bracket_part4
+
+non_bracket_part5 = r"([^\‹\›]*)"
+bracket_regex5 = non_bracket_part5 + r"\‹" + non_bracket_part5 + r"\›" + non_bracket_part5
+
+non_bracket_part6 = r"([^\«\»]*)"
+bracket_regex6 = non_bracket_part6 + r"\«" + non_bracket_part6 + r"\»" + non_bracket_part6
+
+non_bracket_part7 = r"([^\“\”]*)"
+bracket_regex7 = non_bracket_part7 + r"\“" + non_bracket_part7 + r"\”" + non_bracket_part7
+
+non_bracket_part8 = r"([^\‘\’]*)"
+bracket_regex8 = non_bracket_part8 + r"\‘" + non_bracket_part8 + r"\’" + non_bracket_part8
+
+non_bracket_part9 = r"([^\„\”]*)"
+bracket_regex9 = non_bracket_part9 + r"\„" + non_bracket_part9 + r"\”" + non_bracket_part9
+
+non_bracket_part10 = r"([^\¡\!]*)"
+bracket_regex10 = non_bracket_part10 + r"\¡" + non_bracket_part10 + r"\!" + non_bracket_part10
+
+non_bracket_part11 = r"([^\¿\?]*)"
+bracket_regex11 = non_bracket_part11 + r"\¿" + non_bracket_part11 + r"\?" + non_bracket_part11
+
+non_quote_part1 = r'([^"]*)'
+quote_regex1 = non_quote_part1 + r'"' + non_quote_part1 + r'"' + non_quote_part1
+
+non_quote_part2 = r'([^“]*)'
+quote_regex2 = non_quote_part2 + r'“' + non_quote_part2 + r'“' + non_quote_part2
+
+non_quote_part4 = r'([^”]*)'
+quote_regex4 = non_quote_part4 + r'”' + non_quote_part4 + r'”' + non_quote_part4
+non_quote_part3 = r'([^\']*)'
+quote_regex3 = non_quote_part3 + r'\'' + non_quote_part3 + r'\'' + non_quote_part3
 
 def replace_clock_time(line):
     # 删除时间表示中冒号左右的空格 12 : 31 --> 12:31
     return re.sub(time_regex, r"\1:\2", line)
-
+def replace_line_time(line):
+    # 删除时间表示中冒号左右的空格 12 : 31 --> 12:31
+    return re.sub(line_regex, r"\1-\2", line)
 
 def replace_clock_time_noSpace(line):
     # 增加时间表示中冒号左右的空格 12:31 --> 12 : 31
     return re.sub(time_nospace_regex, r"\1 : \2", line)
 
 
-def replace_brackets(line):
+def replace_brackets_1(line):
     # 匹配有左右括号的句子，并删除空格  ( how are you ),she said. --> (how are you),she said.
-    re_obj = re.fullmatch(bracket_regex, line)
+    re_obj = re.fullmatch(bracket_regex1, line)
     if re_obj:
         return re_obj[1] + '(' + re_obj[2].strip() + ')' + re_obj[3]
     else:
         return line
 
+def replace_brackets_2(line):
+    # 匹配有左右括号的句子，并删除空格  { how are you },she said. --> {how are you},she said.
+    re_obj = re.fullmatch(bracket_regex2, line)
+    if re_obj:
+        return re_obj[1] + '{' + re_obj[2].strip() + '}' + re_obj[3]
+    else:
+        return line
+def replace_brackets_3(line):
+    # 匹配有左右括号的句子，并删除空格  { how are you },she said. --> {how are you},she said.
+    re_obj = re.fullmatch(bracket_regex3, line)
+    if re_obj:
+        return re_obj[1] + '[' + re_obj[2].strip() + ']' + re_obj[3]
+    else:
+        return line
+def replace_brackets_4(line):
+    # 匹配有左右括号的句子，并删除空格  { how are you },she said. --> {how are you},she said.
+    re_obj = re.fullmatch(bracket_regex4, line)
+    if re_obj:
+        return re_obj[1] + '<' + re_obj[2].strip() + '>' + re_obj[3]
+    else:
+        return line
+def replace_brackets_5(line):
+    # 匹配有左右括号的句子，并删除空格  { how are you },she said. --> {how are you},she said.
+    re_obj = re.fullmatch(bracket_regex5, line)
+    if re_obj:
+        return re_obj[1] + '‹' + re_obj[2].strip() + '›' + re_obj[3]
+    else:
+        return line
+def replace_brackets_6(line):
+    # 匹配有左右括号的句子，并删除空格  { how are you },she said. --> {how are you},she said.
+    re_obj = re.fullmatch(bracket_regex6, line)
+    if re_obj:
+        return re_obj[1] + '«' + re_obj[2].strip() + '»' + re_obj[3]
+    else:
+        return line
+def replace_brackets_7(line):
+    # 匹配有左右括号的句子，并删除空格  { how are you },she said. --> {how are you},she said.
+    re_obj = re.fullmatch(bracket_regex7, line)
+    if re_obj:
+        return re_obj[1] + '“' + re_obj[2].strip() + '”' + re_obj[3]
+    else:
+        return line
+def replace_brackets_8(line):
+    # 匹配有左右括号的句子，并删除空格  { how are you },she said. --> {how are you},she said.
+    re_obj = re.fullmatch(bracket_regex8, line)
+    if re_obj:
+        return re_obj[1] + '‘' + re_obj[2].strip() + '’' + re_obj[3]
+    else:
+        return line
+def replace_brackets_9(line):
+    # 匹配有左右括号的句子，并删除空格  { how are you },she said. --> {how are you},she said.
+    re_obj = re.fullmatch(bracket_regex9, line)
+    if re_obj:
+        return re_obj[1] + '„' + re_obj[2].strip() + '”' + re_obj[3]
+    else:
+        return line
+def replace_brackets_10(line):
+    # 匹配有左右括号的句子，并删除空格  { how are you },she said. --> {how are you},she said.
+    re_obj = re.fullmatch(bracket_regex10, line)
+    if re_obj:
+        return re_obj[1] + '¡' + re_obj[2].strip() + '!' + re_obj[3]
+    else:
+        return line
+
+def replace_brackets_11(line):
+    # 匹配有左右括号的句子，并删除空格  { how are you },she said. --> {how are you},she said.
+    re_obj = re.fullmatch(bracket_regex11, line)
+    if re_obj:
+        return re_obj[1] + '¿' + re_obj[2].strip() + '?' + re_obj[3]
+    else:
+        return line
 
 def replace_brackets_noSpace(line):
     # 匹配有左右括号的句子，并增加空格  (how are you),she said. --> ( how are you ),she said.
-    re_obj = re.fullmatch(bracket_regex, line)
+    re_obj = re.fullmatch(bracket_regex1, line)
     if re_obj:
         return re_obj[1] + '( ' + re_obj[2].strip() + ' )' + re_obj[3]
     else:
         return line
 
 
-def replace_quotes(line):
+def replace_quotes_1(line):
     # 匹配有两个双引号的句子，并删除空格  " how are you ",she said. --> "how are you",she said.
-    re_obj = re.fullmatch(quote_regex, line)
+    re_obj = re.fullmatch(quote_regex1, line)
     if re_obj:
         return re_obj[1] + '"' + re_obj[2].strip() + '"' + re_obj[3]
     else:
         return line
+def replace_quotes_2(line):
+    # 匹配有两个双引号的句子，并删除空格  " how are you ",she said. --> "how are you",she said.
+    re_obj = re.fullmatch(quote_regex2, line)
+    if re_obj:
+        return re_obj[1] + '”' + re_obj[2].strip() + '”' + re_obj[3]
+    else:
+        return line
+def replace_quotes_3(line):
+    # 匹配有两个双引号的句子，并删除空格  " how are you ",she said. --> "how are you",she said.
+    re_obj = re.fullmatch(quote_regex3, line)
+    if re_obj:
+        return re_obj[1] + '\'' + re_obj[2].strip() + '\'' + re_obj[3]
+    else:
+        return line
 
+def replace_quotes_4(line):
+    # 匹配有两个双引号的句子，并删除空格  " how are you ",she said. --> "how are you",she said.
+    re_obj = re.fullmatch(quote_regex4, line)
+    if re_obj:
+        return re_obj[1] + '”' + re_obj[2].strip() + '”' + re_obj[3]
+    else:
+        return line
 
 def replace_quotes_noSpace(line):
     # 匹配有两个双引号的句子，并增加空格  "how are you",she said. --> " how are you ",she said.
-    re_obj = re.fullmatch(quote_regex, line)
+    re_obj = re.fullmatch(quote_regex1, line)
     if re_obj:
         return re_obj[1] + '" ' + re_obj[2].strip() + ' "' + re_obj[3]
     else:

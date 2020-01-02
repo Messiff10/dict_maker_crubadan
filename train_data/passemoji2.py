@@ -38,7 +38,7 @@ for name in names:
                 centence = line
                 words = regex.split(line)
                 for word in words:
-                    if is_emoji(word):
+                    if word.strip() in emojiset:
                         centence=""
                         # print(line)
                         # out_file.writelines(line)

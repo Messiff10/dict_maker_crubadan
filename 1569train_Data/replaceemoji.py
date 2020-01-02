@@ -1,21 +1,20 @@
+import emoji
+
 from utils.is_emoji import is_emoji
 import re
 import os
 import time
+
 regex = re.compile('\s+')
-data_folder = '/Users/ff/Desktop/测评数据/去表情'
+data_folder = '/Users/ff/Desktop/测评数据/替换表情'
 names = []
 
-# string="hh hh ?? ?! ????AAA    ?  ?  A ??"
-# ss=re.findall(regex,string)
-# for s in ss:
-#     string=string.replace(re.sub('\s+',string),'')
-# print(string)
-emoji_path="/Users/ff/Desktop/测评数据/wordcount/emojis"
-emojiset=set()
-with open(emoji_path ,'r',encoding='utf-8') as f_emoji:
+# 替换表情
+emoji_path = "/Users/ff/Desktop/测评数据/wordcount/emojis"
+emojiset = set()
+with open(emoji_path, 'r', encoding='utf-8') as f_emoji:
     for line in f_emoji:
-        emojis=line.strip().split('\t')
+        emojis = line.strip().split('\t')
         if emojis[0] not in emojiset:
             emojiset.add(emojis[0])
 for dir_path, subpaths, files in os.walk(data_folder):
@@ -36,18 +35,11 @@ for name in names:
         with open(file_path.replace('.txt', '.noemoji'), 'w', encoding='utf-8') as out_file:
             for line in add_file:
                 centence = line
-                words = regex.split(line)
-                for word in words:
-                    if is_emoji(word):
-                        centence=""
-                        # print(line)
-                        # out_file.writelines(line)
-                        break
-                if centence is not "":
-                    count = count + 1
-                    out_file.writelines(line)
-                    # if count>=10000:
-                    #     break
+                line = re.sub(emoji.get_emoji_regexp(), ' ', line)
+                line = re.sub('\s+', ' ', line.strip())
+                if not line.strip() is "":
+                    out_file.write(line.strip())
+                    out_file.write('\n')
         print(count)
         out_file.close()
         add_file.close()

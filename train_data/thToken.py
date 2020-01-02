@@ -4,7 +4,7 @@ import re
 
 from utils.reExpression import replace_quotes, replace_clock_time, replace_brackets
 
-##  一元词表与爬取语料比较
+##  th新闻分词  每三个词分一行
 
 language = "th"
 unigram_path = '/Users/ff/Desktop/train_data/th/th_web.txt'
