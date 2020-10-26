@@ -1,7 +1,9 @@
+from lib2to3.pgen2.conv import Converter
+
 from config.conf_zh import simplifiedChineseIdiomPath, simplifiedChineseXiehouyuPath, simplifiedChineseProverbPath,\
     simplifiedChinesePoetryPath, simplifiedChineseHotwordPath, simplifiedChinese_out_dir, simplifiedChineseWordPath,\
     simplifiedChineseModifyPath, isNotAWord, freq1, freq2, isModify
-from zhDict.transform.langconv import *
+# from zhDict.transform.langconv import *
 import json
 import os
 import re

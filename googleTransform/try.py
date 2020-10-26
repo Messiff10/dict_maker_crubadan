@@ -4,61 +4,28 @@ import time
 import re
 
 
-en_US_noCharacters = re.compile(r"[[0-9a-zA-Z)l(k+j\-h&g%f$d#ßs@aàáâäæãåāz*x\"c'v:ç"
-                                r";b!nñm¹½⅓¼⅛²⅔³⅜¾⁴⅝⅞ⁿ∅\]}>{<\[±_—–·‰¢€₱£¥†‡★“”„«»’‘‚‹›¡¿?/.~`|♪•♣♠♥♦√πΠ÷×§¶∆"
-                                r"≠=≈∞′°″↑^←↓→\\©®™℅≤≥,…\s]+")
-
-def tx(t):
-    return Translator().translate(t, dest=language).text
-
 def transform(language):
     translator = Translator()
-    regex = re.compile('\s+')
-    setence = []
+    # regex = re.compile('\s+')
+    # setence = []
 
-    with open('/home/zhangzhongfang/news_data/en_US_business.txt', 'r', encoding='utf-8') as en_US:
-        with open('/home/zhangzhongfang/news_data/trans_data/business_' + str(language) + '.txt', 'a',encoding='utf-8') \
-                as outpath:
-            for l in en_US:
-                line = l
-                print("l--------"+l)
-                fileds = regex.split(l.strip())
-                for word in fileds:
-                    print("word:"+word)
-                    # print("trans:"+tx(word))
-                    translations = translator.translate(word, dest=language)
-                    print("trans:"+translations.text)
-                    if (re.match(en_US_noCharacters, word) is None):
-                        line = " "
-                        print("word:"+word)
-                        print("@@@@@@@@@@@@@@@@false")
-                        break
 
-                # if(line != " "):
-                #     print("=============================")
-                #     txd = tx(line)
-                #     outpath.write(txd)
-                #     outpath.write("\n")
-                    # setence.append(txd)
-                time.sleep(0.1)
-
-    # translations = translator.translate(setence, dest=language)
-    # with open('/home/zhangzhongfang/news_data/trans_data/business'+str(language)+'.txt','a',encoding='utf-8') as outpath:
-        # for translation in translations:
-        # for i in setence:
-        #     print("translation:"+i)
-        #     outpath.write(i)
-        #     outpath.write("\n")
-    # for sen in setence:
-    #     if()cd d
-    #     print()
+    # with open('/data/python/data/web/transform/type.txt', 'r', encoding='utf-8') as en_US:
+    # with open('/data/python/data/web/transform/type_' + str(language) + '.txt', 'w',encoding='utf-8') \
+    #         as  /outpath:
+        # for l in en_US:
+        #     text.append(l.strip())
+        # print("append",text)
+    translations = translator.translate(['hospital','school','university','gym','shopping','center','shopping','mall','store','hotel','restaurant','church','bookshop','airport','station','subway','station','bus','stop','street','city','town','road','village','bank','campus','tower','colony','Broadway','park','bookstore','supermarket','market','cinema','post','office','library','museum','science','zoom','stand','fruit','stand','factory','Garden','Company','parking','lot','circle','expressway','Boulevard'], dest = language)
+    for translation in translations:
+        print(translation.origin)
+        print(translation.origin, ' -> ', translation.text)
+        # outpath.write(str(translation.text).strip())
+        # outpath.write('\n')
 
 if __name__ == '__main__':
-    # "zu", "zh-TW"'zh-CN','vi','uk','tr','th','sw','sv','sr','sl','sk','ru','ro','pl','no','nl','ms','lv','lt','ko','ja','it','is','id','et''el','de',
-    #                 'da','cs','ca','bg','am','af'
-    # 'zh-HK','pt-PT''pt-BR','in''hu','hr''hi','he','fr-FR','fr-CA','fil','fi','es-ES''es-419','en-US','en-GB','it','is','id','et',
-    # "ar","de","it","es","ru","pl","fi","sv","da","nb",
-    languages = ["ar","de","it","es","ru","pl","fi","sv","da","no","tr","ms_MY","th","es_US"]
+
+    languages = ["fr","ru"]
     # DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
     #
     # SPECIAL_CASES = {
@@ -173,7 +140,7 @@ if __name__ == '__main__':
     #     'fil': 'Filipino',
     #     'he': 'Hebrew'
     # }
-
+#
     # LANGCODES = dict(map(reversed, LANGUAGES.items()))
     # languages = ["ar"]
     # transform(language)
@@ -181,33 +148,3 @@ if __name__ == '__main__':
         print("language:"+language)
         transform(language)
     print("Finish")
-
-
-
-
-# def translate_doc(filename, destination='zh-CN', mix=False):
-#     """
-#     translate a word document type of file and save the result as document and keep the exactly same file format.
-#         :param filename: word doc file
-#         :param destination='zh-CN':
-#         :param mix=True: if True, will have original language and target language into the same doc. paragraphs by paragraphs.
-#     """
-#     def tx(t): return Translator().translate(t, dest=destination).text
-#     # doc = Document(filename)
-#     for p in doc.paragraphs:
-#         txd = tx(p.text)
-#
-#         p.text = p.text + ('\n' + txd if mix else '')
-#
-#     # for table in doc.tables:
-#     #     for row in table.rows:
-#     #         for cell in row.cells:
-#     #             txd = tx(cell.text)
-#     #             p.text = cell.text + ('\n' + txd if mix else '')
-#
-#     f = filename.replace('.doc', destination.lower() + '.doc')
-#     doc.save(f)
-#
-# if __name__ == '__main__':
-#     filename = 'p1.docx'
-#     translate_doc(filename)

@@ -1,5 +1,7 @@
 import re
-
+"""
+常用正则
+"""
 pattern_url = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
 
 pattern_delete = re.compile("%")   # 需要去掉的特殊符号
@@ -513,6 +515,10 @@ def getCharacterPattern(language):
         characterPattern = Si_noCharacters
     elif language.startswith("mk"):
         characterPattern = Mk_noCharacters
+    elif language.startswith("en_CA"):
+        characterPattern = en_US_noCharacters
+    elif language.startswith("en_IN"):
+        characterPattern = en_US_noCharacters
     return characterPattern
 
 

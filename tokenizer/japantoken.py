@@ -1,20 +1,29 @@
-# import MeCab
-# mecab = MeCab.Tagger("-Owakati")
-# with open("/Users/ff/Desktop/train_data/jp/jp_web.txt",'r',encoding='utf-8') as f_in:
-#     with open("/Users/ff/Desktop/train_data/jp/jo_web_split_token2.txt", 'w', encoding='utf-8') as f_out:
-#         for sentence in f_in:
-#             print(mecab.parse(sentence))
-#             f_out.write(str(mecab.parse(sentence)).strip())
-#             f_out.write('\n')
-# print("Finish line")
+import sys
 
-from janome.tokenizer import Tokenizer as janome_tokenizer
-with open("/Users/ff/Desktop/train_data/jp/jp_web.txt",'r',encoding='utf-8') as f_in:
-    with open("/Users/ff/Desktop/train_data/jp/jo_web_split_token3.txt", 'w', encoding='utf-8') as f_out:
+import MeCab
+
+"""
+日语分词  带词性
+"""
+mecab = MeCab.Tagger("-Ochasen")
+file = "/Users/ff/Desktop/jp_test_token.txt"
+file_out = "/Users/ff/Desktop/jp_test_2.txt"
+
+
+def format_tag_result(x):
+    pieces = []
+    for i in x.splitlines()[:-1]:  # 结尾的"EOS"顺手去掉
+        i = i.split()
+        pieces.append(str(i[0]) + "--" + i[-1])  # 选择需要的内容
+    return pieces
+
+
+# mecab_wrapper = JapaneseTokenizer.MecabWrapper(dictType='neologd')
+with open(file, 'r', encoding='utf-8') as f_in:
+    with open(file_out, 'w', encoding='utf-8') as f_out:
         for sentence in f_in:
-# sentence = "日本人のものと見られる、延べ２億件のメールアドレスとパスワードが闇サイトで販売されていたことがわかりました。過去に漏えいしたデータを集めたものと見られ、調査に当たったセキュリティー企業は、日本を狙ったサイバー攻撃のきっかけになるおそれがあるとして注意を呼びかけています。"
-            token_object = janome_tokenizer()
-            alist=[x.surface for x in token_object.tokenize(sentence)]
-            print(" ".join(alist))
-            f_out.write(" ".join(alist).strip())
+            mecab.parse(sentence)
+            pieces = format_tag_result(mecab.parse(sentence))
+
+            f_out.write(" ".join(pieces).strip())
             f_out.write('\n')

@@ -9,6 +9,10 @@ import re
 import os
 import time
 
+
+"""
+生成测试语料
+"""
 # 生成相对应命中率的语料
 def runWord():
     # 产生形如"context \t keys \t desired_word"的结果，可用于测试输入效率
@@ -24,7 +28,7 @@ def runWord():
     for language in languages:
         if ifRemoveNoCharacter:
             characterPattern = getCharacterPattern(language)
-            # print("characterPattern:", characterPattern)
+            print("characterPattern:", characterPattern)
 
         dict_file_path = dict_dir + language + "_unigram"
         dict_lang = getUnigram(dict_file_path)  # 词表
@@ -122,7 +126,8 @@ def runWord():
                         #
                         #     count_out += 1
 
-                        output_file.write(line)
+                        output_file.write(line.strip())
+                        output_file.write('\n')
                         output_scene_res.append(line)
                         count_out += len(words)
                         count_inVocab_all += count_inVocab

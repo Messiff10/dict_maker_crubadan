@@ -1,3 +1,7 @@
+"""
+中文相关文件配置
+"""
+
 simplifiedChineseIdiomPath = "/Users/ff/Desktop/ft_chinese/xinhua/idiom.json"
 simplifiedChineseXiehouyuPath = "/Users/ff/Desktop/ft_chinese/xinhua/xiehouyu.json"
 simplifiedChinesePoetryPath = "/Users/ff/Desktop/ft_chinese/xinhua/poetry.tsv"

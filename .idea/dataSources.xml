@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="tha-wn" uuid="f63a7631-a0bc-4e09-8ea3-0cfcf097601b">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:/usr/local/lib/python3.7/site-packages/pythainlp/corpus/tha-wn.db</jdbc-url>
+    </data-source>
+  </component>
+</project>
